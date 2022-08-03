@@ -3,9 +3,20 @@ const bodyParser = require('body-parser');
 const getTalkers = require('./services/getTalkers');
 const getTalkersID = require('./services/getTalkersID');
 const loginToken = require('./services/loginToken');
-const verifyEmail = require('./middleware/verifyEmail');
-const verifyPassword = require('./middleware/verifyPassword');
-
+const postTalkers = require('./services/postTalkers');
+const {
+  verifyAge,
+  verifyEmail,
+  verifyName,
+  verifyPassword,
+  verifyTalk,
+  verifyTalkRate,
+  verifyTalkWatched,
+  verifyToken,
+} = require('./middleware');
+/* const verifyPassword = require('./middleware/verifyPassword');
+const verifyName = require('./middleware/verifyName');
+const verifyAge = require('./middleware/verifyAge'); */
 const app = express();
 app.use(bodyParser.json());
 
@@ -27,16 +38,30 @@ app.get('/talker/:id', async (req, res) => {
   res.status(200).json(talker);
 });
 
-// não remova esse endpoint, e para o avaliador funcionar
-app.get('/', (_request, response) => {
-  response.status(HTTP_OK_STATUS).send();
-});
-
+// Endpoint post /login 
 app.post('/login', verifyEmail, verifyPassword, (_req, res) => {
   const newToken = {
     token: loginToken(),
   };
   return res.status(200).json(newToken);
+});
+// Endpoint post /talker
+app.post('/talker',
+verifyToken,
+verifyName,
+verifyAge,
+verifyTalk,
+verifyTalkRate,
+verifyTalkWatched,
+async (req, res) => {
+  const { name, age, talk } = req.body;
+  const newTalker = await postTalkers(name, age, talk);
+  return res.status(201).json(newTalker);
+});
+
+// não remova esse endpoint, e para o avaliador funcionar
+app.get('/', (_request, response) => {
+  response.status(HTTP_OK_STATUS).send();
 });
 
 app.listen(PORT, () => {
