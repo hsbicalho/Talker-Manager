@@ -77,7 +77,7 @@ async (req, res) => {
 
 app.delete('/talker/:id', verifyToken, async (req, res) => {
   const { id } = req.params;
-  deleteTalkers(id);
+  await deleteTalkers(id);
   res.status(204).end();
 });
 
