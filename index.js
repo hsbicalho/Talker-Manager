@@ -5,6 +5,7 @@ const getTalkersID = require('./services/getTalkersID');
 const loginToken = require('./services/loginToken');
 const postTalkers = require('./services/postTalkers');
 const putEditTalkers = require('./services/putEditTalker');
+const deleteTalkers = require('./services/deleteTalkers');
 const {
   verifyAge,
   verifyEmail,
@@ -72,6 +73,12 @@ async (req, res) => {
   const { name, age, talk } = req.body;
   const talkerPut = await putEditTalkers(id, name, age, talk);
   res.status(200).json(talkerPut);
+});
+
+app.delete('/talker/:id', verifyToken, async (req, res) => {
+  const { id } = req.params;
+  deleteTalkers(id);
+  res.status(204).end();
 });
 
 // não remova esse endpoint, e para o avaliador funcionar
