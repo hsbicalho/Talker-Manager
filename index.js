@@ -4,6 +4,7 @@ const getTalkers = require('./services/getTalkers');
 const getTalkersID = require('./services/getTalkersID');
 const loginToken = require('./services/loginToken');
 const postTalkers = require('./services/postTalkers');
+const putEditTalkers = require('./services/putEditTalker');
 const {
   verifyAge,
   verifyEmail,
@@ -57,6 +58,20 @@ async (req, res) => {
   const { name, age, talk } = req.body;
   const newTalker = await postTalkers(name, age, talk);
   return res.status(201).json(newTalker);
+});
+
+app.put('/talker/:id',
+verifyToken,
+verifyName,
+verifyAge,
+verifyTalk,
+verifyTalkRate,
+verifyTalkWatched,
+async (req, res) => {
+  const { id } = req.params;
+  const { name, age, talk } = req.body;
+  const talkerPut = await putEditTalkers(id, name, age, talk);
+  res.status(200).json(talkerPut);
 });
 
 // não remova esse endpoint, e para o avaliador funcionar
